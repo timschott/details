@@ -33,6 +33,3 @@ df$rating[323] <- 4.4
 # write to tsv
 write.csv(df, file = "tagged_details.tsv", sep = "\t")
 
-# summarize ratings
-
-
