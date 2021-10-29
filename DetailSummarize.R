@@ -67,10 +67,24 @@ best_samples <- df %>%
   filter(row_number() <= 10) %>%
   select(sample, text, work, rating)
 
-## binomial test?
-
 # H0: mean is 3 ie it is not biased towards detail
 # H1: mean is not 3 ie it is biased towards either pro or not detail
 # let alpha = .05
-
+# not super insightful since this isn't a sample from a population (per-se)
 wilcox.test(df$rating, mu = 3, conf.int = TRUE, alternative = "greater")
+
+# still, make division, at the mean
+df <- df %>%
+  mutate(detail = ifelse(rating > mean(rating), "detail", "not_detail"))
+
+# 197 detail, 167 not detail
+df %>%
+  group_by(detail) %>%
+  summarize(n = n())
+
+# now, need to splinter these samples into two big text files: one for detail, one not, all separated by new_lines
+detail_samples <- df[df$detail=="detail",2]
+not_detail_samples <- df[df$detail=="not_detail",2]
+
+write.table(detail_samples,"detail_samples.txt",sep="\n",row.names=FALSE)
+write.table(not_detail_samples,"not_detail_samples.txt",sep="\n",row.names=FALSE)
