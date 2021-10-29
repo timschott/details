@@ -88,3 +88,4 @@ not_detail_samples <- df[df$detail=="not_detail",2]
 
 write.table(detail_samples,"detail_samples.txt",sep="\n",row.names=FALSE)
 write.table(not_detail_samples,"not_detail_samples.txt",sep="\n",row.names=FALSE)
+
