@@ -1,24 +1,9 @@
 ## Merge sample df with new data points from WordnetSpecificity / POS tagging
 library(dplyr)
 library(ggplot2)
-df <- read.csv("tagged_details.tsv", stringsAsFactors = FALSE)
+df <- read.csv("samples_data_with_spec_and_pos.tsv", sep="\t", stringsAsFactors = FALSE, header = FALSE)
 
-# drop unneeded row index
-df <- df[,2:4]
-
-new_col_names <- c(colnames(df), c("specificity", "adjectives", "adverbs", "nouns", "verbs"))
-
-# read data for "detail" samples
-detail_sample_data <- read.csv("detail_sample_data.csv", stringsAsFactors = FALSE, header = FALSE)
-
-# and "not"
-not_detail_sample_data <- read.csv("not_detail_sample_data.csv", stringsAsFactors = FALSE, header=FALSE)
-
-wordnet_and_pos_data <- as.data.frame(rbind(detail_sample_data, not_detail_sample_data))
-
-df <- as.data.frame(cbind(df, wordnet_and_pos_data))
-colnames(df) <- new_col_names
-
+colnames(df) <- c("sample", "text", "rating", "specificity", "adjectives", "adverbs", "nouns", "verbs", "adpositions")
 # also, add a column to denote the "class_label" label ie just checking if sample rating is above mean
 df <- df %>%
   mutate(class_label = ifelse(rating > mean(rating), "detail", "not_detail"))
@@ -51,3 +36,76 @@ ggplot(data = df, aes(x=nouns, y=verbs)) +
   geom_point(aes(color = cut(specificity, c(-Inf, 3.5, 4.0, 4.5, 5.0, Inf))), size = 1.25) +
   scale_color_manual(name = "specificity",values = color_vals, labels = scale_labels) + 
   ggtitle("Average Distance to Broadest Hypernym")
+
+## let's group by class_label and then average specificity
+df %>% group_by(class_label) %>%
+  summarize(mean(specificity), mean(nouns), mean(verbs), mean(adjectives), mean(adverbs))
+
+df %>% arrange(desc(specificity)) %>%
+  filter(row_number() <= 10) %>%
+  select(sample, specificity, nouns, verbs)
+
+df %>% arrange(specificity) %>%
+  filter(row_number() <= 10) %>%
+  select(sample, specificity, class_label)
+
+## let's check out a noun-to-verb ratio
+
+df %>% summarize(sample, specificity, ntv = nouns/verbs) %>% 
+  arrange(desc(ntv))  %>% 
+  select(sample, specificity, ntv) %>% 
+  filter(row_number() <= 10)
+
+df <- df %>% mutate(ntv = nouns/verbs)
+
+## label by detail / not_detail
+ggplot(df, aes(x = ntv, y = specificity)) +
+  theme_classic() +
+  geom_point(aes(col=class_label), size = 1.25) + 
+  scale_color_manual(name="Label", labels = c("Detail", "Not Detail"), 
+  values = c("detail"="#0003c7", "not_detail"="#3df100")) +
+  labs(title="Specificity and Noun-to-Verb Ratio", y="specificity", x="noun-to-verb ratio")
+
+## .778 - extremely highly correlated
+cor(df$ntv, df$specificity)
+
+## is there a significant difference between the specificity of detail and non detail assignments?
+ggplot(df[df$class_label=="detail",], aes(x=specificity)) + 
+  geom_density(alpha=.9, fill="#82C0E7") + 
+  labs(title="Specificity, Detail")
+
+ggplot(df[df$class_label=="not_detail",], aes(x=specificity)) + 
+  geom_density(alpha=.9, fill="#82C0E7") + 
+  labs(title="Specificity, Not Detail")
+
+detail <- df[df$class_label == "detail",]
+not_detail <- df[df$class_label == "not_detail",]
+
+## Is specificity normally distributed?
+
+shapiro.test(df$specificity) # p val of .005, so it is not normal
+shapiro.test(detail$specificity) # p val of .008, so it is not normal
+shaprio.test(not_detail$specificity) # p val of .17, so it is normal
+
+ggplot(detail, aes(sample = specificity)) + 
+  stat_qq() +
+  stat_qq_line() + 
+  labs(title="QQ-Plot, Detail", x = "Theoretical", y = "Sample")
+
+ggplot(not_detail, aes(sample = specificity)) + 
+  stat_qq() +
+  stat_qq_line() + 
+  labs(title="QQ-Plot, Not Detail", x = "Theoretical", y = "Sample")
+
+ggplot(df, aes(sample = specificity)) + 
+  stat_qq() +
+  stat_qq_line() + 
+  labs(title="QQ-Plot of Specificity, 364 Random Passages", x = "Theoretical", y = "Sample")
+
+## let's get prepositions, too...
+## mean adjectives differ by .3 so not included
+## detail group has more specificity because more nouns
+## and more adpositions 
+df %>% group_by(class_label) %>%
+  summarize(mean(specificity), mean(nouns), mean(verbs), mean(adverbs), mean(adpositions))
+
