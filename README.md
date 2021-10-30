@@ -20,7 +20,7 @@ Code for "Details in the Novel"
   * Investigates the outputs from `WordnetSpecificity.ipynb`. Tallies metrics by class "label," produces visualizations, determines normality of calculated data with `stat_qq()`, etc.
 * `WordnetSpecificity.ipynb`
   * Routine to calculate a "specificity" metric for an inputted block of text (described in [Nelson 2020, Computational
-Grounded Theory: A Methodological Framework](https://journals.sagepub.com/doi/pdf/10.1177/0049124117729703))
+Grounded Theory: A Methodological Framework](https://journals.sagepub.com/doi/pdf/10.1177/0049124117729703)). Also applies part of speech tallies for classes of interest. Writes results to file.
 * `concat_txts.sh`
   * Combines .txt files in a directory into one-big `.txt` file. (I'm trying to get better at bash...)
 * `get_26_gutentexts.sh`
