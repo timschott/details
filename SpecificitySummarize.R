@@ -14,6 +14,8 @@ df$adverbs[2]
 
 summary(df$specificity)
 
+df %>% group_by(class_label) %>% summarize(n = n())
+
 ## to wordnet, verbs are "less specific" than nouns.
 ## so, passages that contain a high number of verbs compared to adjectives
 ## will have their scores diluted
@@ -109,3 +111,5 @@ ggplot(df, aes(sample = specificity)) +
 df %>% group_by(class_label) %>%
   summarize(mean(specificity), mean(nouns), mean(verbs), mean(adverbs), mean(adpositions))
 
+t <- as.data.frame(df$text)
+t[311,]
