@@ -52,12 +52,12 @@ df %>% arrange(specificity) %>%
   select(sample, specificity, class_label)
 
 ## let's check out a noun-to-verb ratio
-
-df %>% summarize(sample, specificity, ntv = nouns/verbs) %>% 
-  arrange(desc(ntv))  %>% 
-  select(sample, specificity, ntv) %>% 
+df %>%arrange(specificity) %>%
+  select(sample, specificity, class_label) %>% 
   filter(row_number() <= 10)
 
+df %>% select(class_label)
+df$text[72]
 df <- df %>% mutate(ntv = nouns/verbs)
 
 ## label by detail / not_detail
