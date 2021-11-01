@@ -27,6 +27,12 @@ Grounded Theory: A Methodological Framework](https://journals.sagepub.com/doi/pd
   * Invokes Wolff's Project Gutenberg [wrapper](https://github.com/c-w/gutenberg) for a provided series of books and their Gutenberg id's. Saves each book's output as `.txt` file. (Again, trying to get better at bash.)
 * `gut_tokenize.py`
   * Reusable/importable text-cleaning methods for books from Project Gutenberg. Attempts to advance past the opening "boilerplate," removes chapter numbers, etc. Relatively "unopinionated" -- doesn't remove numbers, punctuation, stopwords, etc. (maintains as much as possible to keep options open for downstream analysis).
+* `data/` contains the feature matrix, which holds:
+  * sample name
+  * parts of speech data
+  * specificity scores
+  * my detail "rating" annotation
+* `viz/` contains graphs and tables related to the log-odds and specificity work.
 
 ## Corpus (as of 10/29):
 
