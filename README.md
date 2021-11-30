@@ -3,9 +3,9 @@ Code for "Details in the Novel"
 ## File Map:
 
 * `BertPreTrainDataMunge.R`
-  * todo
+  * Partitions annotated data set into train, dev and test sets.
 * `BertTrainModel.ipynb`
-  * todo
+  * Trains `BERT` classifiers of various sizes to determine optimal model for detail classification.
 * `ClauseParse.ipynb`
   * Breaks a paragraph into its clauses. Used for early exploration of manually identifying a "detail" (with Zola's *Germinal* as a test case)
 * `Clustering.ipynb`
