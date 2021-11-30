@@ -56,7 +56,7 @@ Grounded Theory: A Methodological Framework](https://journals.sagepub.com/doi/pd
   * my detail "rating" annotation
 * `viz/` contains graphs and tables related to the log-odds and specificity work.
 
-## Corpus (as of 10/29):
+## Corpus:
 
 * austen *pride_and_prejudice*
 * austen *sense_and_sensibility*
