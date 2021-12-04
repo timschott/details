@@ -1,7 +1,7 @@
 ## Merge sample df with new data points from WordnetSpecificity / POS tagging
 library(dplyr)
 library(ggplot2)
-df <- read.csv("samples_data_with_spec_and_pos.tsv", sep="\t", stringsAsFactors = FALSE, header = FALSE)
+df <- read.csv("data/samples_data.tsv", sep="\t", stringsAsFactors = FALSE, header = TRUE)
 
 colnames(df) <- c("sample", "text", "rating", "specificity", "adjectives", "adverbs", "nouns", "verbs", "adpositions")
 # also, add a column to denote the "class_label" label ie just checking if sample rating is above mean
