@@ -54,6 +54,7 @@ Grounded Theory: A Methodological Framework](https://journals.sagepub.com/doi/pd
   * parts of speech data
   * specificity scores
   * my detail "rating" annotation
+* `paper/` contains the project write-up, which is 6 pages and adheres to the ACL's formatting guidelines.
 * `viz/` contains graphs and tables related to the log-odds and specificity work.
 
 ## Corpus:
