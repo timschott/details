@@ -36,13 +36,6 @@ df_sub <- df %>% filter(match_output =="Both") %>%
 
 comments <- NA
 
-df <- read.csv("detail_claims_subset.csv")
-
-df_sub <- df %>% filter(match_output =="Both") %>%
-  select(passage, book, left_claim_keywords, right_claim_keywords, left_claim, right_claim, claim_id)
-
-comments <- NA
-
 for (i in 1: nrow(df_sub)) {
   print(df_sub[i,][c('left_claim', 'right_claim', 'passage', 'book')])
   comment <- readline(prompt="Enter feedback: ")
@@ -61,5 +54,36 @@ write.csv(combined, "descriptive_both_sides_comments.csv")
 
 ## it looks like descriptive, compared to detail, is giving us a lot more mileage. 
 ## now, let's check out if that holds for left/right context
+## first, lets sample 10 at random
 
+df <- read.csv("descriptive_claims_subset.csv")
 
+df_sub <- df %>% filter(match_output!= "Both") %>%
+  select(passage, book, left_claim_keywords, right_claim_keywords, left_claim, right_claim, claim_id)
+
+comments <- NA
+
+for (i in 1:10) {
+  print(df_sub[i,][c('left_claim', 'right_claim', 'passage', 'book')])
+  comment <- readline(prompt="Enter feedback: ")
+  comments[i] <- paste0(comment, " : ", df_sub[i,]['claim_id']) 
+}
+
+comments
+
+df_sub[1:10,]$claim_id
+
+## next, lets intentionally look at 5 right ones since the sample had mostly left claims.
+
+df <- read.csv("descriptive_claims_subset.csv")
+
+df_sub <- df %>% filter(match_output == "Right") %>%
+  select(passage, book, left_claim_keywords, right_claim_keywords, left_claim, right_claim, claim_id)
+
+comments <- NA
+
+for (i in 1: 5) {
+  print(df_sub[i,][c('left_claim', 'right_claim', 'passage', 'book')])
+  comment <- readline(prompt="Enter feedback: ")
+  comments[i] <- paste0(comment, " : ", df_sub[i,]['claim_id']) 
+}
