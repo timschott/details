@@ -27,4 +27,39 @@ colnames(combined) <- c("comments", "claim_id")
 # write to file
 write.csv(combined, "detail_both_sides_comments.csv")
 
-### now pull descriptive passages as well and see if the treatment is different or falls into similar themes
+### now pull descriptive passages as well 
+## and see if the treatment is different or falls into similar themes
+df <- read.csv("descriptive_claims_subset.csv")
+
+df_sub <- df %>% filter(match_output =="Both") %>%
+  select(passage, book, left_claim_keywords, right_claim_keywords, left_claim, right_claim, claim_id)
+
+comments <- NA
+
+df <- read.csv("detail_claims_subset.csv")
+
+df_sub <- df %>% filter(match_output =="Both") %>%
+  select(passage, book, left_claim_keywords, right_claim_keywords, left_claim, right_claim, claim_id)
+
+comments <- NA
+
+for (i in 1: nrow(df_sub)) {
+  print(df_sub[i,][c('left_claim', 'right_claim', 'passage', 'book')])
+  comment <- readline(prompt="Enter feedback: ")
+  comments[i] <- paste0(comment, " : ", df_sub[i,]['claim_id']) 
+
+}
+
+claim_ids <- c(17693,39939,59229,52499,48223,17512,50217,17594,17387,13652,20046,17096,67807,27083,2083,3956,55292,67091,43705,3951,57917,32486,30733,17271,48023,19491,20408,17931,67703,54030,2295,70092,54061,56516,16672,48822,2935,70031,32024,15763,25800,20124,13084,66413,15545,13539,24697,66167,19291,48792,42628,67434,2564,5499,43297,68948,63136,4413,20052,43446,29018,6189,69696)
+
+claim_ids <- claim_ids[1:44]
+
+combined <- as.data.frame(cbind(comments, claim_ids))
+colnames(combined) <- c("comments", "claim_id")
+# write to file
+write.csv(combined, "descriptive_both_sides_comments.csv")
+
+## it looks like descriptive, compared to detail, is giving us a lot more mileage. 
+## now, let's check out if that holds for left/right context
+
+
