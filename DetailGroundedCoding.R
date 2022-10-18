@@ -58,7 +58,7 @@ write.csv(combined, "descriptive_both_sides_comments.csv")
 
 df <- read.csv("descriptive_claims_subset.csv")
 
-df_sub <- df %>% filter(match_output!= "Both") %>%
+df_sub <- df %>% filter(match_output!= "Left") %>%
   select(passage, book, left_claim_keywords, right_claim_keywords, left_claim, right_claim, claim_id)
 
 comments <- NA
