@@ -56,17 +56,23 @@ Driver method that:
 -tags passage with spacy, pulling out every NOUN
 -hands off lemmas and their indices (in the doc) to disambiguate lemmas
 '''
-def tag_passage_with_spacy(passage, target_pos, spacy_tagger, wsd_encoder, senses_vsm, senses_of_interest):
+def tag_passage_with_spacy(passage, target_pos, spacy_tagger, wsd_encoder, senses_vsm):
 	# input sentence, with indices of token/span to disambiguate
 	doc = spacy_tagger(passage)
 	target_idxs = []
 	for i, word in enumerate(doc):
-		if word.pos_ == target_pos:
+		if word.pos_ in target_pos:
 			target_idxs.append(i)
 
 	target_lemmas = [doc[i].lemma_ for i in target_idxs]
 
-	disambiguate_lemmas(target_lemmas, target_idxs, doc, target_pos, wsd_encoder, senses_vsm, senses_of_interest)
+	passage_nouns = []
+	passage_deps = []
+	passage_lexs = []
+
+	passage_nouns, passage_deps, passage_lexs = disambiguate_lemmas(target_lemmas, target_idxs, doc, target_pos, wsd_encoder, senses_vsm)
+
+	return passage_nouns, passage_deps, passage_lexs
 
 '''
 Helper method to extract the requisite embedding for a given word from the context embedding list
@@ -75,7 +81,7 @@ def get_target_embedding(contextual_embeddings, index):
 	target_embedding = np.array([contextual_embeddings[index][1]]).mean(axis=0)
 	return target_embedding / np.linalg.norm(target_embedding)
 
-def disambiguate_lemmas(lemmas, idxs, doc, target_pos, wsd_encoder, senses_vsm, senses_of_interest):
+def disambiguate_lemmas(lemmas, idxs, doc, target_pos, wsd_encoder, senses_vsm):
 
 	# retrieve contextual embedding for target token/span
 	tokens = [t.text for t in doc]
@@ -96,14 +102,52 @@ def disambiguate_lemmas(lemmas, idxs, doc, target_pos, wsd_encoder, senses_vsm, 
 
 		# report matches, showing also additional info from WordNet for each match
 		for sk, sim in matches:
-		    syn = wn_utils.sk2syn(sk)
-		    lex = wn_utils.sk2lexname(sk)
-		    if lex in senses_of_interest:
-		    	nouns.append(lemma)
-		    	deps.append(doc[idxs[i]].dep_)
-		    	lexs.append(lex)
+			syn = wn_utils.sk2syn(sk)
+			lex = wn_utils.sk2lexname(sk)
+			nouns.append(lemmas[i])
+			deps.append(doc[idxs[i]].dep_)
+			lexs.append(lex)
+			if len(nouns) != len(deps) or len(deps) != len(lexs):
+				print(f"mismatch -- nouns: {len(nouns)} deps: {len(deps)} lexs: {(len(lexs))} for {doc}")
 
 	return nouns, deps, lexs
+
+def specificity_neural(sample, spacy_tagger, target_pos):
+	print(sample)
+	tagged_sample=spacy_tagger(sample)
+	hyper_sum = 0
+	noun_and_verb_count = 0
+
+	target_idxs = []
+	for i, word in enumerate(tagged_sample):
+		if word.pos_ in target_pos:
+			target_idxs.append(i)
+
+	# retrieve contextual embedding for target token/span
+	tokens = [t.text for t in tagged_sample]
+	# gather contextual embeddings from encoder
+	contextual_embeddings = wsd_encoder.token_embeddings([tokens])[0]
+
+	# get target embedding
+	for i in range(len(idxs)):
+		# get target embedding
+		target_embedding = get_target_embedding(contextual_embeddings, idxs[i])
+
+		# perform lookup
+		matches = senses_vsm.match_senses(target_embedding, lemma=lemmas[i], postag=target_pos, topn=1)
+
+		if matches is None:
+			noun_and_verb_count -= 1
+			continue
+
+		for sk, sim in matches:
+			syn = wn_utils.sk2syn(sk)
+			hyper_sum += len(list(syn.closure(syn.hypernyms())))
+
+	# a few 'descriptive' passages lack 
+	if noun_and_verb_count == 0:
+		return 0
+	return hyper_sum / noun_and_verb_count
 
 if __name__ == '__main__':
 
@@ -120,13 +164,22 @@ if __name__ == '__main__':
 	all_lexs = []
 	c = 0
 	for passage in descriptive_passages['passage']:
-		print(f"inventorying passage with id {descriptive_passages['passage_id'].iloc[c]}")
-		passage_nouns, passage_deps, passage_lexs = tag_passage_with_spacy(, "NOUN", en_nlp, encoder, vsm, ["noun.artifact", "noun.food", "noun.possession", "noun.object", "noun.substance", "noun.animal", "noun.plant", "noun.shape"])
+		passage_nouns = []
+		passage_deps = []
+		passage_lexs = []
+		passage_nouns, passage_deps, passage_lexs = tag_passage_with_spacy(passage, ["NOUN"], en_nlp, encoder, vsm)
 		all_nouns.append(passage_nouns)
 		all_deps.append(passage_deps)
-		all_lexs.append(passae_lexs)
+		all_lexs.append(passage_lexs)
+		test_spec = specificity_neural(passage, en_nlp, ["NOUN", "VERB"])
+		if c % 100 == 0 and c != 0:
+			break
+			print(f"inventorying passage at index {c} with id {descriptive_passages['passage_id'].iloc[c]}")
 		c+=1
 
+	print(f"inventoried {c} passages")
 
-
+	descriptive_passages['nouns'] = all_nouns
+	descriptive_passages['deps'] = all_deps
+	descriptive_passages['supersenses'] = all_lexs
 
