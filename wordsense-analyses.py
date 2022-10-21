@@ -64,7 +64,7 @@ def tag_passage_with_spacy(passage, target_pos, spacy_tagger, wsd_encoder, sense
 	doc = spacy_tagger(passage)
 	target_idxs = []
 	for i, word in enumerate(doc):
-		if word.pos_ in target_pos:
+		if word.pos_ == target_pos:
 			target_idxs.append(i)
 
 	target_lemmas = [doc[i].lemma_ for i in target_idxs]
@@ -110,8 +110,10 @@ def disambiguate_lemmas(lemmas, idxs, doc, target_pos, wsd_encoder, senses_vsm):
 			nouns.append(lemmas[i])
 			deps.append(doc[idxs[i]].dep_)
 			lexs.append(lex)
-			if len(nouns) != len(deps) or len(deps) != len(lexs):
-				print(f"mismatch -- nouns: {len(nouns)} deps: {len(deps)} lexs: {(len(lexs))} for {doc}")
+	
+	if len(nouns) != len(deps) or len(deps) != len(lexs):
+		print(f"mismatch -- nouns: {len(nouns)} deps: {len(deps)} lexs: {(len(lexs))} for {doc}")
+		return [], [], []
 
 	return nouns, deps, lexs
 
@@ -155,6 +157,7 @@ def specificity_neural(sample, spacy_tagger, wsd_encoder, senses_vsm, target_pos
 			syn = wn_utils.sk2syn(sk)
 
 			# update hyper_sum with the number of nouns in the hypernym chain for that lemma's synset
+			# note that it's OK to see this warning https://github.com/nltk/nltk/blob/develop/nltk/corpus/reader/wordnet.py#L594
 			hyper_sum += len(list(syn.closure(lambda s: s.hypernyms())))
 
 	# a few 'descriptive' passages lack any actual nouns, control for that
@@ -232,30 +235,31 @@ if __name__ == '__main__':
 	all_deps = []
 	all_lexs = []
 	test_specs = []
-	old_specs = []
 	c = 0
+
 	for passage in descriptive_passages['passage']:
 		passage_nouns = []
 		passage_deps = []
 		passage_lexs = []
-		passage_nouns, passage_deps, passage_lexs = tag_passage_with_spacy(passage, ["NOUN"], en_nlp, encoder, vsm)
+		passage_nouns, passage_deps, passage_lexs = tag_passage_with_spacy(passage, "NOUN", en_nlp, encoder, vsm)
 		all_nouns.append(passage_nouns)
 		all_deps.append(passage_deps)
 		all_lexs.append(passage_lexs)
 		test_spec = specificity_neural(passage, en_nlp, encoder, vsm, ["NOUN", "VERB"])
 		test_specs.append(test_spec)
-		old_spec = specificity_normal(passage, en_nlp, descriptive_passages['passage_id'].iloc[c])
-		old_specs.append(old_spec)
 		if c % 100 == 0 and c != 0:
 			print(f"inventorying passage at index {c} with id {descriptive_passages['passage_id'].iloc[c]}")
 		c+=1
 
 	print(f"inventoried {c} passages")
 
-	# descriptive_passages['nouns'] = all_nouns
-	# descriptive_passages['deps'] = all_deps
-	# descriptive_passages['supersenses'] = all_lexs
-	five_number(test_specs)
-	print("------------")
-	five_number(old_specs)
+	
+	descriptive_passages['nouns'] = all_nouns
+	descriptive_passages['deps'] = all_deps
+	descriptive_passages['supersenses'] = all_lexs
+	descriptive_passages['specificity_neural'] = test_specs
+
+	# write out
+	descriptive_passages.to_csv('data/descriptive_claims_analyzed_10_20.csv')
+	
 
