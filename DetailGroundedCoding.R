@@ -7,7 +7,7 @@ library(ggplot2)
 library(gt)
 library(paletteer)
 
-df <- read.csv("detail_claims_subset.csv")
+df <- read.csv("data/detail_claims_subset.csv")
 
 df_sub <- df %>% filter(match_output =="Both") %>%
   select(passage, book, left_claim_keywords, right_claim_keywords, left_claim, right_claim, claim_id)
