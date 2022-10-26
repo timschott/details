@@ -29,7 +29,7 @@ write.csv(combined, "detail_both_sides_comments.csv")
 
 ### now pull descriptive passages as well 
 ## and see if the treatment is different or falls into similar themes
-df <- read.csv("descriptive_claims_subset.csv")
+df <- read.csv("data/descriptive_claims_subset.csv")
 
 df_sub <- df %>% filter(match_output =="Both") %>%
   select(passage, book, left_claim_keywords, right_claim_keywords, left_claim, right_claim, claim_id)
