@@ -58,7 +58,7 @@ write.csv(combined, "descriptive_both_sides_comments.csv")
 
 df <- read.csv("descriptive_claims_subset.csv")
 
-df_sub <- df %>% filter(match_output!= "Left") %>%
+df_sub <- df %>% filter(match_output == "Left") %>%
   select(passage, book, left_claim_keywords, right_claim_keywords, left_claim, right_claim, claim_id)
 
 comments <- NA
@@ -72,8 +72,6 @@ for (i in 1:10) {
 comments
 
 df_sub[1:10,]$claim_id
-
-## next, lets intentionally look at 5 right ones since the sample had mostly left claims.
 
 df <- read.csv("descriptive_claims_subset.csv")
 
