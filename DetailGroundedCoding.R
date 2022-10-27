@@ -36,7 +36,7 @@ df_sub <- df %>% filter(match_output =="Both") %>%
 
 comments <- NA
 
-for (i in 1: nrow(df_sub)) {
+for (i in 46: 100) {
   print(df_sub[i,][c('left_claim', 'right_claim', 'passage', 'book')])
   comment <- readline(prompt="Enter feedback: ")
   comments[i] <- paste0(comment, " : ", df_sub[i,]['claim_id']) 
