@@ -37,18 +37,20 @@ df_sub <- df %>% filter(match_output != "Right") %>%
   filter(!(claim_id %in% prev_ids)) %>%
   select(passage, book, left_claim_keywords, right_claim_keywords, left_claim, right_claim, claim_id)
 
-comments <- NA
+dods <- NA
+buckets <- NA
 
-for (i in seq(1:25)) {
-  print(df_sub[i,][c('left_claim', 'right_claim', 'passage')])
-  comment <- readline(prompt="Enter feedback: ")
-  comments[i] <- paste0(comment, " : ", df_sub[i,]['claim_id']) 
-
+for (i in c(26:50)) {
+  print(df_sub[i,][c('left_claim', 'right_claim', 'passage', 'claim_id')])
+  comment <- readline(prompt="DoD: ")
+  focus <- readline(prompt="focus: ")
+  dods[i] <- paste0(comment, " : ", df_sub[i,]['claim_id']) 
+  buckets[i] <- paste0(focus, " : ", df_sub[i,]['claim_id']) 
 }
 
-claim_ids <- c(17693,39939,59229,52499,48223,17512,50217,17594,17387,13652,20046,17096,67807,27083,2083,3956,55292,67091,43705,3951,57917,32486,30733,17271,48023,19491,20408,17931,67703,54030,2295,70092,54061,56516,16672,48822,2935,70031,32024,15763,25800,20124,13084,66413,15545,13539,24697,66167,19291,48792,42628,67434,2564,5499,43297,68948,63136,4413,20052,43446,29018,6189,69696)
+# claim_ids <- c(17693,39939,59229,52499,48223,17512,50217,17594,17387,13652,20046,17096,67807,27083,2083,3956,55292,67091,43705,3951,57917,32486,30733,17271,48023,19491,20408,17931,67703,54030,2295,70092,54061,56516,16672,48822,2935,70031,32024,15763,25800,20124,13084,66413,15545,13539,24697,66167,19291,48792,42628,67434,2564,5499,43297,68948,63136,4413,20052,43446,29018,6189,69696)
 
-claim_ids <- claim_ids[1:44]
+# claim_ids <- claim_ids[1:44]
 
 combined <- as.data.frame(cbind(comments, claim_ids))
 colnames(combined) <- c("comments", "claim_id")
