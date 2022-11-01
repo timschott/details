@@ -31,13 +31,16 @@ write.csv(combined, "detail_both_sides_comments.csv")
 ## and see if the treatment is different or falls into similar themes
 df <- read.csv("data/descriptive_claims_subset.csv")
 
-df_sub <- df %>% filter(match_output =="Both") %>%
+prev_ids <- c (43357,13861,55809,3193,18123,18448,49273,4444,63287,67719,12988,20046,43562,13420,27174,32501,62124,60257,56027,69729,43446,39151,55292,44568,15542,51063,994)
+
+df_sub <- df %>% filter(match_output != "Right") %>%
+  filter(!(claim_id %in% prev_ids)) %>%
   select(passage, book, left_claim_keywords, right_claim_keywords, left_claim, right_claim, claim_id)
 
 comments <- NA
 
-for (i in 46: 100) {
-  print(df_sub[i,][c('left_claim', 'right_claim', 'passage', 'book')])
+for (i in seq(1:25)) {
+  print(df_sub[i,][c('left_claim', 'right_claim', 'passage')])
   comment <- readline(prompt="Enter feedback: ")
   comments[i] <- paste0(comment, " : ", df_sub[i,]['claim_id']) 
 
