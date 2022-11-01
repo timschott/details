@@ -31,7 +31,7 @@ write.csv(combined, "detail_both_sides_comments.csv")
 ## and see if the treatment is different or falls into similar themes
 df <- read.csv("data/descriptive_claims_subset.csv")
 
-prev_ids <- c (43357,13861,55809,3193,18123,18448,49273,4444,63287,67719,12988,20046,43562,13420,27174,32501,62124,60257,56027,69729,43446,39151,55292,44568,15542,51063,994)
+prev_ids <- c(43357,13861,55809,3193,18123,18448,49273,4444,63287,67719,12988,20046,43562,13420,27174,32501,62124,60257,56027,69729,43446,39151,55292,44568,15542,51063,994,36447,44670,7011,67510,45214,55054,5346,21951,24223,62978,70195,19124,64519,69863,52234,20012,7956,63241,36809,48194,16294,51557,42180,58662,59369,40206,42189,5488,53543,25272,18541,37242,2295,26770,63139,40227,6045,42420,15138,7948,51055,70427,21920,43633,5824,26715,33456,1608,15763,15600)
 
 df_sub <- df %>% filter(match_output != "Right") %>%
   filter(!(claim_id %in% prev_ids)) %>%
@@ -40,7 +40,7 @@ df_sub <- df %>% filter(match_output != "Right") %>%
 dods <- NA
 buckets <- NA
 
-for (i in c(26:50)) {
+for (i in c(1:50)) {
   print(df_sub[i,][c('left_claim', 'right_claim', 'passage', 'claim_id')])
   comment <- readline(prompt="DoD: ")
   focus <- readline(prompt="focus: ")
