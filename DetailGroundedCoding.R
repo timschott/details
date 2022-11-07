@@ -40,15 +40,13 @@ df_sub <- df %>% filter(match_output != "Right") %>%
 dods <- NA
 buckets <- NA
 
-for (i in c(1:30)) {
+for (i in c(1:45)) {
   print(df_sub[i,][c('left_claim', 'right_claim', 'passage', 'claim_id')])
   comment <- readline(prompt="DoD: ")
   focus <- readline(prompt="focus: ")
   dods[i] <- paste0(comment, " : ", df_sub[i,]['claim_id']) 
   buckets[i] <- paste0(focus, " : ", df_sub[i,]['claim_id']) 
 }
-
-# claim_ids <- claim_ids[1:44]
 
 combined <- as.data.frame(cbind(comments, claim_ids))
 colnames(combined) <- c("comments", "claim_id")
