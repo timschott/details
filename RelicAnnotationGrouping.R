@@ -7,7 +7,9 @@ library(ggplot2)
 library(gt)
 library(paletteer)
 
-df <- read.csv("data/relic-annotations-through-11-6.csv")
+df <- read.csv("data/relic-annotations-through-11-8.csv")
+
+df %>% group_by(bucket) %>% summarize(count = n()) %>% arrange(desc(count))
 
 metaphor <- df %>% filter(bucket == 'metaphor') %>% select(passage, claim.id)
 ice <- df %>% filter(bucket == 'internal character experience') %>% select(claim.id, passage)
