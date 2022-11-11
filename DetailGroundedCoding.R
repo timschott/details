@@ -20,7 +20,7 @@ df_sub <- df %>% filter(match_output != "Right") %>%
 dods <- NA
 buckets <- NA
 
-for (i in c(1:45)) {
+for (i in c(1:20)) {
   print(df_sub[i,][c('left_claim', 'right_claim', 'passage', 'claim_id')])
   comment <- readline(prompt="DoD: ")
   focus <- readline(prompt="focus: ")
