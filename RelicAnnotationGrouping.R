@@ -7,7 +7,7 @@ library(ggplot2)
 library(gt)
 library(paletteer)
 
-df <- read.csv("data/relic-annotations-through-11-17.csv")
+df <- read.csv("data/relic-annotations-through-11-18.csv")
 
 df %>% group_by(bucket) %>% summarize(count = n()) %>% arrange(desc(count))
 
