@@ -18,7 +18,10 @@ prev_buckets <- read.delim('data/relic_prev_buckets.txt', sep="\n", header = TRU
 
 ## filter out previously attend to samples
 
-df_sub <- df %>% filter(match_output != "Right") %>%
+df_sub <- df %>% filter(match_output != "Right") %>% # remove claims that don't implicate description in left_claim
+  filter(book != 'the_souls_of_black_folk') %>% # remove non-fiction
+  filter(claim_id != 43357) %>% # remove reference to out of corpus work
+  filter(claim_id != 5454) %>% # remove reference to out of corpus work
   filter(!(claim_id %in% prev_ids$claim_id)) %>%
   select(passage, book, left_claim_keywords, right_claim_keywords, left_claim, right_claim, claim_id) %>%
   sample_frac(size=1)
