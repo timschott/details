@@ -34,7 +34,7 @@ to_check <- 50
 for (i in c(1:to_check)) {
   print(df_sub[i,][c('left_claim', 'passage', 'right_claim', 'claim_id')])
   focus <- readline(prompt="focus: ")
-  buckets[i] <- paste0(focus, " : ", df_sub[i,]['claim_id']) 
+  buckets[i] <- focus
 }
 
 ## store new information
@@ -45,15 +45,15 @@ new_ids <- c(prev_ids$claim_id, df_sub$claim_id[1:to_check])
 new_ids <- as.data.frame(new_ids)
 colnames(new_ids) <- c("claim_id")
 
-# write.csv(new_ids, 'data/relic_prev_ids.csv', row.names=FALSE, quote = FALSE)
+write.csv(new_ids, 'data/relic_prev_ids.csv', row.names=FALSE, quote = FALSE)
 
 ## track passages
 
-new_passages <- c(prev_passages$passage, df_sub$claim_id[1:to_check])
+new_passages <- c(prev_passages$passage, df_sub$passage[1:to_check])
 new_passages <- as.data.frame(new_passages)
 colnames(new_passages) <- c("passage")
 
-# write.csv(new_passages, 'data/relic_prev_passages.txt', row.names = FALSE, quote = FALSE)
+write.csv(new_passages, 'data/relic_prev_passages.txt', row.names = FALSE, quote = FALSE)
 
 ## track buckets
 
@@ -61,4 +61,4 @@ new_buckets <- c(prev_buckets$bucket, buckets)
 new_buckets <- as.data.frame(new_buckets)
 colnames(new_buckets) <- c("bucket")
 
-# write.csv(new_buckets, 'data/relic_prev_buckets.txt', row.names = FALSE, quote = FALSE)
+write.csv(new_buckets, 'data/relic_prev_buckets.txt', row.names = FALSE, quote = FALSE)
