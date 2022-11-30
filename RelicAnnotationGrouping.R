@@ -3,26 +3,37 @@
 ## libraries
 
 library(dplyr)
-library(ggplot2)
-library(gt)
-library(paletteer)
 
-df <- read.csv("data/relic-annotations-through-11-18.csv")
+prev_ids <- read.csv("data/relic_prev_ids.csv", header=TRUE)
+prev_buckets <- read.delim('data/relic_prev_buckets.txt', sep="\n", header = TRUE)
+prev_passages <- read.delim('data/relic_prev_passages.txt', sep="\n", header = TRUE)
 
-df %>% group_by(bucket) %>% summarize(count = n()) %>% arrange(desc(count))
+agg <- as.data.frame(cbind(prev_buckets, prev_ids, prev_passages))
 
-metaphor <- df %>% filter(bucket == 'metaphor') %>% select(passage, claim.id)
-ice <- df %>% filter(bucket == 'internal character experience') %>% select(claim.id, passage)
-ec <- df %>% filter(bucket == 'external characterization') %>% select(claim.id, passage)
-sd <- df %>% filter(bucket == 'sensory detail') %>% select(claim.id, passage)
-id <- df %>% filter(bucket == 'informative detail') %>% select(claim.id, passage)
-ee <- df %>% filter(bucket == 'embellishing an event') %>% select(claim.id, passage)
+###
+# library(tidyverse)
 
-write.table(ice,"relic-banks/internal-character-experience.txt",sep="\t\t", eol="\n\n", col.names = c("internal-character-experience", ""), row.names=FALSE)
-write.table(ec,"relic-banks/external-characterization.txt",sep="\t\t", eol="\n\n", col.names = c("external-characterization", ""), row.names=FALSE)
-write.table(metaphor,"relic-banks/metaphor.txt",sep="\t\t", eol="\n\n", col.names = c("metaphor", ""), row.names=FALSE)
-write.table(sd,"relic-banks/sensory-detail.txt",sep="\t\t", eol="\n\n", col.names = c("sensory-detail", ""), row.names=FALSE)
-write.table(id,"relic-banks/informative-detail.txt",sep="\t\t", eol="\n\n", col.names = c("informative-detail", ""), row.names=FALSE)
-write.table(ee,"relic-banks/embellishing-an-event.txt",sep="\t\t", eol="\n\n", col.names = c("embellishing-an-event", ""), row.names=FALSE)
+# prev_buckets <- mutate(n_words = stringr::str_count(prev, ' ') + 1) %>% 
+  # count(n_words) %>% 
+  # complete(n_words = 0:max(n_words))
+###
+
+prev_buckets %>% group_by(bucket) %>% summarize(count = n()) %>% arrange(desc(count))
+
+metaphor <- agg %>% filter(bucket == 'metaphor') %>% select(claim_id, passage)
+ice <- agg %>% filter(bucket == 'internal character experience') %>% select(claim_id, passage)
+ec <- agg %>% filter(bucket == 'external characterization') %>% select(claim_id, passage)
+sd <- agg %>% filter(bucket == 'sensory detail') %>% select(claim_id, passage)
+id <- agg %>% filter(bucket == 'informative detail') %>% select(claim_id, passage)
+ee <- agg %>% filter(bucket == 'embellishing an event') %>% select(claim_id, passage)
+x <- agg %>% filter(bucket == 'x') %>% select(claim_id, passage)
+
+write.table(ice,"data/relic-banks/internal-character-experience.txt",sep="\t\t", eol="\n\n", col.names = c("internal-character-experience", ""), row.names=FALSE)
+write.table(ec,"data/relic-banks/external-characterization.txt",sep="\t\t", eol="\n\n", col.names = c("external-characterization", ""), row.names=FALSE)
+write.table(metaphor,"data/relic-banks/metaphor.txt",sep="\t\t", eol="\n\n", col.names = c("metaphor", ""), row.names=FALSE)
+write.table(sd,"data/relic-banks/sensory-detail.txt",sep="\t\t", eol="\n\n", col.names = c("sensory-detail", ""), row.names=FALSE)
+write.table(id,"data/relic-banks/informative-detail.txt",sep="\t\t", eol="\n\n", col.names = c("informative-detail", ""), row.names=FALSE)
+write.table(ee,"data/relic-banks/embellishing-an-event.txt",sep="\t\t", eol="\n\n", col.names = c("embellishing-an-event", ""), row.names=FALSE)
+write.table(x,"data/relic-banks/x.txt",sep="\t\t", eol="\n\n", col.names = c("x", ""), row.names=FALSE)
 
 
