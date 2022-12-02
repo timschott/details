@@ -10,14 +10,6 @@ prev_passages <- read.delim('data/relic_prev_passages.txt', sep="\n", header = T
 
 agg <- as.data.frame(cbind(prev_buckets, prev_ids, prev_passages))
 
-###
-# library(tidyverse)
-
-# prev_buckets <- mutate(n_words = stringr::str_count(prev, ' ') + 1) %>% 
-  # count(n_words) %>% 
-  # complete(n_words = 0:max(n_words))
-###
-
 prev_buckets %>% group_by(bucket) %>% summarize(count = n()) %>% arrange(desc(count))
 
 metaphor <- agg %>% filter(bucket == 'metaphor') %>% select(claim_id, passage)
