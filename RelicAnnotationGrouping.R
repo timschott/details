@@ -10,7 +10,7 @@ prev_passages <- read.delim('data/relic_prev_passages.txt', sep="\n", header = T
 
 agg <- as.data.frame(cbind(prev_buckets, prev_ids, prev_passages))
 
-prev_buckets %>% group_by(bucket) %>% summarize(count = n()) %>% arrange(desc(count))
+prev_buckets %>% group_by(bucket) %>% summarize(count = n()*.8) %>% arrange(desc(count))
 
 metaphor <- agg %>% filter(bucket == 'metaphor') %>% select(claim_id, passage)
 ice <- agg %>% filter(bucket == 'internal character experience') %>% select(claim_id, passage)
