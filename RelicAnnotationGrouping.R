@@ -28,4 +28,14 @@ write.table(id,"data/relic-banks/informative-detail.txt",sep="\t\t", eol="\n\n",
 write.table(ee,"data/relic-banks/embellishing-an-event.txt",sep="\t\t", eol="\n\n", col.names = c("embellishing-an-event", ""), row.names=FALSE)
 write.table(x,"data/relic-banks/x.txt",sep="\t\t", eol="\n\n", col.names = c("x", ""), row.names=FALSE)
 
+## 
 
+# what books are in the dataset?
+df <- read.csv("data/descriptive_claims_subset.csv")
+
+d <- df %>% filter(match_output != "Right") %>% # remove claims that don't implicate description in left_claim
+  filter(book != 'the_souls_of_black_folk') %>% # remove non-fiction
+  filter(claim_id != 43357) %>% # remove reference to out of corpus work
+  filter(claim_id != 5454) %>%
+  group_by(book) %>%
+  summarize(count=n())
