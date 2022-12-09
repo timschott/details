@@ -25,14 +25,13 @@ df_sub <- df %>% filter(match_output != "Right") %>% # remove claims that don't 
   filter(!(claim_id %in% prev_ids$claim_id)) %>%
   select(passage, book, left_claim_keywords, right_claim_keywords, left_claim, right_claim, claim_id) %>%
   sample_frac(size=1)
-
 ## create container for new tags
 
 buckets <- NA
 
 ## set number of passages to annotate
 
-to_check <- 50
+to_check <- 91
 
 for (i in c(1:to_check)) {
   print(df_sub[i,][c('left_claim', 'passage', 'right_claim', 'claim_id')])
