@@ -31,7 +31,7 @@ buckets <- NA
 
 ## set number of passages to annotate
 
-to_check <- 91
+to_check <- nrow(df_sub)
 
 for (i in c(1:to_check)) {
   print(df_sub[i,][c('left_claim', 'passage', 'right_claim', 'claim_id')])
