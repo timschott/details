@@ -21,6 +21,7 @@ def read_data(directory_name):
     for file in files:
         if (".txt" in file):
             with open(directory_name + file, encoding="utf-8") as f:
+                print(f"tokenizing {file}...")
                 #lowercase text and append
                 file_list.append(basename(f.name))
                 texts.append(f.read().lower())
